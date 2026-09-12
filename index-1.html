@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IPLens - What Is My IP?</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#0b1020;color:#eef2ff}
+.container{width:min(1050px,92%);margin:auto}
+header{padding:18px 0;border-bottom:1px solid #263453;position:sticky;top:0;background:#0b1020ee;backdrop-filter:blur(10px)}
+.nav{display:flex;justify-content:space-between;align-items:center}.logo{font-size:27px;font-weight:900;color:#7c9cff}
+button{border:0;border-radius:12px;padding:11px 15px;background:#18233e;color:white;font-weight:700;cursor:pointer}
+.hero{text-align:center;padding:60px 0 35px}.badge{background:#152442;color:#91a9ff;padding:7px 12px;border-radius:30px;font-size:13px}
+h1{font-size:clamp(40px,8vw,70px);margin:18px 0 10px}.hero p{color:#aeb8d3}
+.card{background:#111a30;border:1px solid #263453;border-radius:22px;padding:24px;margin:20px 0}
+.ipbox{text-align:center}.label{color:#8f9ab5;font-size:13px;text-transform:uppercase;letter-spacing:1px}
+.ip{font-size:clamp(32px,7vw,58px);font-weight:900;margin:8px 0;word-break:break-word}.status{color:#63e6a8}
+.actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.item{background:#0d1528;border:1px solid #25304d;border-radius:15px;padding:16px}
+.item b{display:block;color:#8996b5;font-size:12px;text-transform:uppercase;margin-bottom:5px}.item span{font-weight:700;word-break:break-word}
+h2{margin-top:35px}.faq{border-bottom:1px solid #263453}.faq button{width:100%;background:none;text-align:left;padding:17px 0}.answer{display:none;color:#aeb8d3;padding:0 0 17px}
+.contact a{color:#91a9ff}footer{text-align:center;color:#7f8ba7;padding:35px 0}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:white;color:#111;padding:10px 16px;border-radius:10px;display:none;font-weight:bold}
+@media(max-width:650px){.grid{grid-template-columns:1fr}.card{padding:18px}}
+</style>
+</head>
+<body>
+<header><div class="container nav"><div class="logo">IPLens</div><button onclick="location.reload()">🔄 Refresh</button></div></header>
+
+<main class="container">
+<section class="hero">
+<span class="badge">FAST • SIMPLE • PRIVACY CONSCIOUS</span>
+<h1>What Is My IP?</h1>
+<p>Check your public IP, approximate location, ISP, device information and download your IP report.</p>
+</section>
+
+<section class="card ipbox">
+<div class="label">Your Public IP Address</div>
+<div class="ip" id="ip">Loading...</div>
+<div class="status" id="status">Detecting your IP...</div>
+<div class="actions">
+<button onclick="loadIP()">🔄 Refresh IP</button>
+<button onclick="copyIP()">📋 Copy IP</button>
+<button onclick="copyAll()">📄 Copy All</button>
+<button onclick="shareResult()">↗️ Share</button>
+<button onclick="downloadReport()">⬇️ Download IP Report</button>
+</div>
+</section>
+
+<h2>🌍 IP & Network Information</h2>
+<section class="card grid">
+<div class="item"><b>Location</b><span id="location">-</span></div>
+<div class="item"><b>Country</b><span id="country">-</span></div>
+<div class="item"><b>City</b><span id="city">-</span></div>
+<div class="item"><b>ISP</b><span id="isp">-</span></div>
+<div class="item"><b>Organization</b><span id="org">-</span></div>
+<div class="item"><b>IP Type</b><span id="type">-</span></div>
+<div class="item"><b>ASN</b><span id="asn">-</span></div>
+<div class="item"><b>Country Code</b><span id="cc">-</span></div>
+<div class="item"><b>Timezone</b><span id="timezone">-</span></div>
+<div class="item"><b>Coordinates</b><span id="coordinates">-</span></div>
+</section>
+
+<h2>📱 Device & Browser</h2>
+<section class="card grid">
+<div class="item"><b>Device</b><span id="device">-</span></div>
+<div class="item"><b>Operating System</b><span id="os">-</span></div>
+<div class="item"><b>Browser</b><span id="browser">-</span></div>
+<div class="item"><b>Screen</b><span id="screen">-</span></div>
+<div class="item"><b>Language</b><span id="language">-</span></div>
+<div class="item"><b>Online</b><span id="online">-</span></div>
+<div class="item"><b>Browser Timezone</b><span id="btimezone">-</span></div>
+</section>
+
+<h2>🔐 VPN / Proxy / Tor</h2>
+<section class="card grid">
+<div class="item"><b>VPN Detection</b><span>API Required</span></div>
+<div class="item"><b>Proxy Detection</b><span>API Required</span></div>
+<div class="item"><b>Tor Detection</b><span>API Required</span></div>
+<div class="item"><b>Blacklist Check</b><span>API Required</span></div>
+</section>
+
+<h2>❓ FAQ</h2>
+<section class="card">
+<div class="faq"><button onclick="faq(this)">What is an IP address? ＋</button><div class="answer">An IP address is a network identifier used by devices to communicate over the internet.</div></div>
+<div class="faq"><button onclick="faq(this)">Can my IP show my exact home address? ＋</button><div class="answer">Usually no. IP geolocation normally provides an approximate city or region, not an exact street address.</div></div>
+<div class="faq"><button onclick="faq(this)">Does a VPN change my public IP? ＋</button><div class="answer">Yes. Websites generally see the VPN server IP while the VPN is active.</div></div>
+<div class="faq"><button onclick="faq(this)">Is IP location always accurate? ＋</button><div class="answer">No. IP geolocation is approximate and can sometimes show the wrong city or region.</div></div>
+<div class="faq"><button onclick="faq(this)">Does IPLens store my IP? ＋</button><div class="answer">This static version has no own database or login system. IP information is requested from the external IP information service.</div></div>
+</section>
+
+<h2>👤 About & Contact</h2>
+<section class="card contact">
+<h3>Zeeshan Hussain — Owner & Creator</h3>
+<p>IPLens is a simple IP and network information toolkit for everyday users.</p>
+<p><strong>Email:</strong> <a href="mailto:zeetaigamingoffical@gmail.com">zeetaigamingoffical@gmail.com</a></p>
+</section>
+</main>
+
+<footer>IPLens — What Is My IP?<br>Created & Owned by Zeeshan Hussain<br>© 2026 IPLens. All rights reserved.</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+let ipData={};
+
+async function loadIP(){
+const ip=document.getElementById("ip"),status=document.getElementById("status");
+ip.textContent="Loading...";status.textContent="Detecting your IP...";
+try{
+const r=await fetch("https://ipwho.is/?fields=success,message,ip,type,country,country_code,region,city,latitude,longitude,timezone,connection");
+const d=await r.json();
+if(!d.success)throw new Error(d.message||"Lookup failed");
+ipData=d;
+ip.textContent=d.ip||"Unavailable";status.textContent="● IP detected successfully";
+set("location",[d.city,d.region,d.country].filter(Boolean).join(", "));
+set("country",d.country);set("city",d.city);set("isp",d.connection?.isp);
+set("org",d.connection?.org);set("type",d.type);set("asn",d.connection?.asn?"AS"+d.connection.asn:"-");
+set("cc",d.country_code);set("timezone",d.timezone?.id);
+set("coordinates",(d.latitude!=null&&d.longitude!=null)?d.latitude+", "+d.longitude:"-");
+detectDevice();
+}catch(e){ip.textContent="Unavailable";status.textContent="Could not detect IP. Check internet connection."}
+}
+function set(id,v){document.getElementById(id).textContent=v||"-"}
+function detectDevice(){
+let u=navigator.userAgent;
+set("device",/Mobi|Android|iPhone|iPad/i.test(u)?"Mobile":"Desktop / PC");
+set("os",/Android/i.test(u)?"Android":/iPhone|iPad/i.test(u)?"iOS":/Windows/i.test(u)?"Windows":/Mac/i.test(u)?"macOS":/Linux/i.test(u)?"Linux":"Unknown");
+set("browser",/Edg/i.test(u)?"Microsoft Edge":/Chrome/i.test(u)?"Google Chrome":/Firefox/i.test(u)?"Mozilla Firefox":/Safari/i.test(u)?"Safari":"Unknown");
+set("screen",screen.width+" × "+screen.height);set("language",navigator.language);
+set("online",navigator.onLine?"Online":"Offline");set("btimezone",Intl.DateTimeFormat().resolvedOptions().timeZone);
+}
+function report(){
+return `IPLens — IP REPORT
+Generated: ${new Date().toString()}
+
+PUBLIC IP
+IP: ${ipData.ip||"Unavailable"}
+Type: ${ipData.type||"Unavailable"}
+
+LOCATION
+City: ${ipData.city||"Unavailable"}
+Region: ${ipData.region||"Unavailable"}
+Country: ${ipData.country||"Unavailable"}
+Country Code: ${ipData.country_code||"Unavailable"}
+Coordinates: ${ipData.latitude??"Unavailable"}, ${ipData.longitude??"Unavailable"}
+Timezone: ${ipData.timezone?.id||"Unavailable"}
+
+NETWORK
+ISP: ${ipData.connection?.isp||"Unavailable"}
+Organization: ${ipData.connection?.org||"Unavailable"}
+ASN: ${ipData.connection?.asn?"AS"+ipData.connection.asn:"Unavailable"}
+
+DEVICE
+Device: ${document.getElementById("device").textContent}
+OS: ${document.getElementById("os").textContent}
+Browser: ${document.getElementById("browser").textContent}
+Screen: ${screen.width} × ${screen.height}
+Language: ${navigator.language}
+Online: ${navigator.onLine?"Yes":"No"}
+Browser Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}
+
+OWNER
+Zeeshan Hussain
+Contact: zeetaigamingoffical@gmail.com`;
+}
+function copyIP(){navigator.clipboard.writeText(ipData.ip||"Unavailable").then(()=>toast("IP copied!"))}
+function copyAll(){navigator.clipboard.writeText(report()).then(()=>toast("Report copied!"))}
+function downloadReport(){
+let blob=new Blob([report()],{type:"text/plain;charset=utf-8"});
+let a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="IPLens-IP-Report.txt";
+document.body.appendChild(a);a.click();a.remove();toast("IP Report downloaded!");
+}
+async function shareResult(){
+let text="My public IP is "+(ipData.ip||"Unavailable")+" — IPLens";
+if(navigator.share){try{await navigator.share({title:"My IP — IPLens",text:text})}catch(e){}}
+else navigator.clipboard.writeText(text).then(()=>toast("Share text copied!"));
+}
+function faq(btn){let a=btn.nextElementSibling;a.style.display=a.style.display==="block"?"none":"block"}
+function toast(t){let x=document.getElementById("toast");x.textContent=t;x.style.display="block";setTimeout(()=>x.style.display="none",1800)}
+loadIP();
+</script>
+</body>
+</html>
